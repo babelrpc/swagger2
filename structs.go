@@ -1,8 +1,6 @@
 package swagger2
 
-import ()
-
-// This is the root document object for the API specification. It combines what previously was the Resource Listing and API Declaration (version 1.2 and earlier) together into one document.
+// Swagger is the root document object for the API specification. It combines what previously was the Resource Listing and API Declaration (version 1.2 and earlier) together into one document.
 type Swagger struct {
 	Swagger             string              `yaml:"swagger" json:"swagger"`                                             // Required. Specifies the Swagger Specification version being used. It can be used by the Swagger UI and other clients to interpret the API listing. The value MUST be "2.0".
 	Info                Info                `yaml:"info" json:"info"`                                                   // Required. Provides metadata about the API. The metadata can be used by the clients if needed.
@@ -21,7 +19,7 @@ type Swagger struct {
 	ExternalDocs        *Documentation      `yaml:"externalDocs,omitempty" json:"externalDocs,omitempty"`               // Additional external documentation.
 }
 
-// The object provides metadata about the API. The metadata can be used by the clients if needed, and can be presented in the Swagger-UI for convenience.
+// Info provides metadata about the API. The metadata can be used by the clients if needed, and can be presented in the Swagger-UI for convenience.
 type Info struct {
 	Title          string   `yaml:"title" json:"title"`                                       // Required. The title of the application.
 	Description    string   `yaml:"description,omitempty" json:"description,omitempty"`       // A short description of the application. GFM syntax can be used for rich text representation.
@@ -46,12 +44,12 @@ type License struct {
 	Url  string `yaml:"url,omitempty" json:"url,omitempty"` // A URL to the license used for the API. MUST be in the format of a URL.
 }
 
-// Holds the relative paths to the individual endpoints. The path is appended to the basePath in order to construct the full URL. The Paths may be empty, due to ACL constraints.
+// Paths holds the relative paths to the individual endpoints. The path is appended to the basePath in order to construct the full URL. The Paths may be empty, due to ACL constraints.
 type Paths map[string]PathItem
 
 // Note Path Extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 
-// Describes the operations available on a single path. A Path Item may be empty, due to ACL constraints. The path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.
+// PathItem describes the operations available on a single path. A Path Item may be empty, due to ACL constraints. The path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.
 type PathItem struct {
 	Ref        string      `yaml:"$ref,omitempty" json:"$ref,omitempty"`             // Allows for an external definition of this path item. The referenced structure MUST be in the format of a Path Item Object. If there are conflicts between the referenced definition and this Path Item's definition, the behavior is undefined.
 	Get        *Operation  `yaml:"get,omitempty" json:"get,omitempty"`               // A definition of a GET operation on this path.
@@ -66,7 +64,7 @@ type PathItem struct {
 	// Vendor extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 }
 
-// Describes a single API operation on a path.
+// Operation describes a single API operation on a path.
 type Operation struct {
 	Tags         []string       `yaml:"tags,omitempty" json:"tags,omitempty"`                 // A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.
 	Summary      string         `yaml:"summary,omitempty" json:"summary,omitempty"`           // A short summary of what the operation does. For maximum readability in the swagger-ui, this field SHOULD be less than 120 characters.
@@ -84,13 +82,13 @@ type Operation struct {
 	// Vendor extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 }
 
-// Allows referencing an external resource for extended documentation.
+// Documentation allows referencing an external resource for extended documentation.
 type Documentation struct {
 	Description string `yaml:"description,omitempty" json:"description,omitempty"` // A short description of the target documentation. GFM syntax can be used for rich text representation.
 	Url         string `yaml:"url" json:"url"`                                     // Required. The URL for the target documentation. Value MUST be in the format of a URL.
 }
 
-// Describes a single operation parameter.
+// Parameter describes a single operation parameter.
 //
 // A unique parameter is defined by a combination of a name and location.
 //
@@ -134,7 +132,7 @@ date          string    date        As defined by full-date - RFC3339
 dateTime      string    date-time   As defined by date-time - RFC3339
 */
 
-// An limited subset of JSON-Schema's items object. It is used by parameter definitions that are not located in "body".
+// ItemsDef is a limited subset of JSON-Schema's items object. It is used by parameter definitions that are not located in "body".
 type ItemsDef struct {
 	Ref                  string        `yaml:"$ref,omitempty" json:"$ref,omitempty"`                                 // Required. The reference string.
 	Type                 string        `yaml:"type,omitempty" json:"type,omitempty"`                                 // Required. The type of the parameter. Since the parameter is not located at the request body, it is limited to simple types (that is, not an object). The value MUST be one of "string", "number", "integer", "boolean", "array" or "file". If type is "file", the consumes MUST be either "multipart/form-data" or " application/x-www-form-urlencoded" and the parameter MUST be in "formData".
@@ -157,7 +155,7 @@ type ItemsDef struct {
 	AdditionalProperties *ItemsDef     `yaml:"additionalProperties,omitempty" json:"additionalProperties,omitempty"` // Used for maps
 }
 
-// A container for the expected responses of an operation. The container maps a HTTP response code to the expected response. It is not expected from the documentation to necessarily cover all possible HTTP response codes, since they may not be known in advance. However, it is expected from the documentation to cover a successful operation response and any known errors.
+// Responses is a container for the expected responses of an operation. The container maps a HTTP response code to the expected response. It is not expected from the documentation to necessarily cover all possible HTTP response codes, since they may not be known in advance. However, it is expected from the documentation to cover a successful operation response and any known errors.
 // The default can be used a default response object for all HTTP codes that are not covered individually by the specification.
 // The Responses Object MUST contain at least one response code, and it SHOULD be the response for a successful operation call.
 type Responses map[string]Response
@@ -166,7 +164,7 @@ type Responses map[string]Response
 // {HTTP code}: Any HTTP status code can be used as the property name (one property per HTTP status code). Describes the expected response for that HTTP status code. Reference Object can be used to link to a response that is defined at the Swagger Object's responses section.
 // Extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 
-// Describes a single response from an API Operation.
+// Response describes a single response from an API Operation.
 type Response struct {
 	Description string  `yaml:"description" json:"description"`               // Required. A short description of the response. GFM syntax can be used for rich text representation.
 	Schema      *Schema `yaml:"schema,omitempty" json:"schema,omitempty"`     // A definition of the response structure. It can be a primitive, an array or an object. If this field does not exist, it means no content is returned as part of the response. As an extension to the Schema Object, its root type value may also be "file". This SHOULD be accompanied by a relevant produces mime-type.
@@ -174,7 +172,7 @@ type Response struct {
 	Examples    Example `yaml:"examples,omitempty" json:"examples,omitempty"` // An example of the response message.
 }
 
-// Lists the headers that can be sent as part of a response.
+// Headers lists the headers that can be sent as part of a response.
 type Headers map[string]Header
 
 // Header object
@@ -183,10 +181,10 @@ type Header struct {
 	ItemsDef    `yaml:",omitempty,inline"`
 }
 
-// Allows sharing examples for operation responses. keys must be a mime type
+// Example allows sharing examples for operation responses. keys must be a mime type.
 type Example map[string]interface{}
 
-// Allows adding meta data to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag used there.
+// Tag allows adding meta data to a single tag that is used by the Operation Object. It is not mandatory to have a Tag Object per tag used there.
 type Tag struct {
 	Name         string         `yaml:"name" json:"name"`                                     // Required. The name of the tag.
 	Description  string         `yaml:"description,omitempty" json:"description,omitempty"`   // A short description for the tag. GFM syntax can be used for rich text representation.
@@ -195,7 +193,7 @@ type Tag struct {
 	// Vendor extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 }
 
-// JSON schema
+// Schema represents a JSON schema.
 type Schema struct {
 	ItemsDef      `yaml:",omitempty,inline"`
 	Title         string            `yaml:"title,omitempty" json:"title,omitempty"`
@@ -212,7 +210,7 @@ type Schema struct {
 	Example       interface{}       `yaml:"example,omitempty" json:"example,omitempty"`             // A free-form property to include a an example of an instance for this schema.
 }
 
-// The xml property allows extra definitions when translating the JSON definition to XML. The XML Object contains additional information about the available options.
+// Xml allows extra definitions when translating the JSON definition to XML. The XML Object contains additional information about the available options.
 type Xml struct {
 	Name      string `yaml:"name,omitempty" json:"name,omitempty"`           // Replaces the name of the element/attribute used for the described schema property. When defined within the Items Object (items), it will affect the name of the individual XML elements within the list. When defined alongside type being array (outside the items), it will affect the wrapping element and only if wrapped is true. If wrapped is false, it will be ignored.
 	Namespace string `yaml:"namespace,omitempty" json:"namespace,omitempty"` // The URL of the namespace definition. Value SHOULD be in the form of a URL.
@@ -221,16 +219,16 @@ type Xml struct {
 	Wrapped   *bool  `yaml:"wrapped,omitempty" json:"wrapped,omitempty"`     // MAY be used only for an array definition. Signifies whether the array is wrapped (for example, <books><book/><book/></books>) or unwrapped (<book/><book/>). Default value is false. The definition takes effect only when defined alongside type being array (outside the items).
 }
 
-// An object to hold data types that can be consumed and produced by operations. These data types can be primitives, arrays or models.
+// Definitions holds data types that can be consumed and produced by operations. These data types can be primitives, arrays or models.
 type Definitions map[string]Schema
 
-// An object to hold parameters to be reused across operations. Parameter definitions can be referenced to the ones defined here.
+// Parameters holds parameters to be reused across operations. Parameter definitions can be referenced to the ones defined here.
 type Parameters map[string]Parameter
 
-// A declaration of the security schemes available to be used in the specification. This does not enforce the security schemes on the operations and only serves to provide the relevant details for each scheme.
+// SecurityDefinitions is a declaration of the security schemes available to be used in the specification. This does not enforce the security schemes on the operations and only serves to provide the relevant details for each scheme.
 type SecurityDefinitions map[string]SecurityDefinition
 
-// Allows the definition of a security scheme that can be used by the operations. Supported schemes are basic authentication, an API key (either as a header or as a query parameter) and OAuth2's common flows (implicit, password, application and access code).
+// SecurityDefinition allows the definition of a security scheme that can be used by the operations. Supported schemes are basic authentication, an API key (either as a header or as a query parameter) and OAuth2's common flows (implicit, password, application and access code).
 type SecurityDefinition struct {
 	Type             string `yaml:"type" json:"type"`                                   // Required. The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
 	Description      string `yaml:"description,omitempty" json:"description,omitempty"` // A short description for security scheme.
@@ -244,8 +242,8 @@ type SecurityDefinition struct {
 	// Vendor extensions: Allows extensions to the Swagger Schema. The field name MUST begin with x-, for example, x-internal-id. The value can be null, a primitive, an array or an object. See Vendor Extensions for further details.
 }
 
-// Lists the available scopes for an OAuth2 security scheme.
+// Scopes lists the available scopes for an OAuth2 security scheme.
 type Scopes map[string]string
 
-// Lists the required security schemes to execute this operation. The object can have multiple security schemes declared in it which are all required (that is, there is a logical AND between the schemes).
+// Security lists the required security schemes to execute this operation. The object can have multiple security schemes declared in it which are all required (that is, there is a logical AND between the schemes).
 type Security map[string][]string
